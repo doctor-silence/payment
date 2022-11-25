@@ -1,0 +1,23 @@
+
+{% block content %}
+  <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <h1>Товар {{ item.name }}</h1>
+        </div>
+  </div>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-10">
+        <div class="list-group">
+            {% for item in items %}
+            <h3>Название: {{ item.name }}</h3>
+             <p>Описание: {{ item.description }}</p>
+                <p>Цена: {{ item.price }}</p>
+            {% endfor %}
+                <form action="{% url 'create-checkout-session' product %}" method="GET">
+                <button type="submit">Buy</button>
+                    {% csrf_token %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
