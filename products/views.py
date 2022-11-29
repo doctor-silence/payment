@@ -3,7 +3,7 @@ from django.conf import settings
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from django.views import View
-from .models import Item
+from .models import Product
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -16,11 +16,10 @@ class CancelView(TemplateView):
 
 
 class ProductHomePageView(TemplateView):
-    model = Item
     template_name = 'home.html'
 
     def get_context_data(self, **kwargs):
-        product = Item.objects.get()
+        product = Product.objects.get(name='Стол')
         context = super(ProductHomePageView, self).get_context_data(**kwargs)
         context.update({
             "product": product,
@@ -31,7 +30,7 @@ class ProductHomePageView(TemplateView):
 class CreateCheckoutSessionView(View):
     def get(self, request, *args, **kwargs):
         product_id = self.kwargs['pk']
-        product = Item.objects.get(id=product_id)
+        product = Product.objects.get(id=product_id)
         YOUR_DOMAIN = "http://127.0.0.1:8000"
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
@@ -39,10 +38,9 @@ class CreateCheckoutSessionView(View):
                 {
                     'price_data': {
                         'currency': 'usd',
-                        'unit_amount': Item.price,
+                        'unit_amount': product.price,
                         'product_data': {
-                            'name': Item.name,
-                            'description': Item.description
+                            'name': product.name,
                         },
                     },
                     'quantity': 1,
